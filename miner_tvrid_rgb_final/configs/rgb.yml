@@ -1,0 +1,52 @@
+DEVICE: ppu
+
+DATA:
+  DATASET: ltcc
+  ROOT: /home/data
+  # LTCC near-peak allocation from the paper: m=9, n=9.
+  # The resulting image budget is 2*m*n=162 <= B_max=174.
+  IDS_PER_BATCH: 9
+  REPS_PER_ID: 9
+  IMG_SIZE: 224
+  EVAL_FRAMES: 5
+  NUM_WORKERS: 4
+  EMBEDDINGS_PATH: weights/ltcc_embeddings_camera.json
+  VAL_RATIO: 0.0
+
+MODEL:
+  # Put the DIFFER-initialized EVA02-L checkpoint here before training.
+  PRETRAINED_PATH: weights/differ_ltcc.pth
+  CAMERA_XISHU: 3
+
+LOSS:
+  CLIP_TEMPERATURE: 0.1
+  CLIP_LEARN_TEMPERATURE: false
+
+SOLVER:
+  OPTIMIZER: SGD
+  SCHEDULER: linear
+  LR: 2e-7
+  WEIGHT_DECAY: 0.01
+  MOMENTUM: 0.9
+  WARMUP_EPOCHS: 1
+  WARMUP_FACTOR: 0.01
+  LR_DECAY_FACTOR: 0.1
+  MAX_EPOCHS: 20
+  EVAL_STEPS: 100
+  GRAD_CLIP: 10.0
+  SEED: 1234
+  # Paper tau for single-modal CC-ReID soft sampling.
+  MINING_TEMPERATURE: 0.1
+
+AUG:
+  HFLIP: 0.5
+  # DIFFER's default LTCC pipeline has horizontal flip, random crop and
+  # random erasing; vertical flip is specific to top-view TVRID and is not
+  # appropriate for upright LTCC person images.
+  VFLIP: 0.0
+  RANDOM_CROP: 0.5
+  COLOR_JITTER: 0.0
+  RANDOM_ERASING: 0.5
+
+# Resolved under the repository root at run time.
+OUTPUT_DIR: logs/{timestamp}

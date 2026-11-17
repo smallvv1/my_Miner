@@ -1,0 +1,47 @@
+DEVICE: ppu
+
+DATA:
+  DATASET: prcc
+  ROOT: /home/data
+  # PRCC allocation selected by the paper's variance sweep: m=5, n=17.
+  # The resulting image budget is 2*m*n=170 <= B_max=174.
+  IDS_PER_BATCH: 5
+  REPS_PER_ID: 17
+  IMG_SIZE: 224
+  EVAL_FRAMES: 5
+  NUM_WORKERS: 4
+  EMBEDDINGS_PATH: weights/prcc_embeddings.json
+  VAL_RATIO: 0.0
+
+MODEL:
+  # PRCC-specific DIFFER EVA02-L initialization prepared in the workspace.
+  PRETRAINED_PATH: /home/DIFFER_NPC/outputs/reproduction_phase3/PRCC/full_paper_faithful/run1/eva02_l_bio_final.pth
+  CAMERA_XISHU: 3
+
+LOSS:
+  CLIP_TEMPERATURE: 0.1
+  CLIP_LEARN_TEMPERATURE: false
+
+SOLVER:
+  OPTIMIZER: SGD
+  SCHEDULER: linear
+  LR: 2e-7
+  WEIGHT_DECAY: 0.01
+  MOMENTUM: 0.9
+  WARMUP_EPOCHS: 1
+  WARMUP_FACTOR: 0.01
+  LR_DECAY_FACTOR: 0.1
+  MAX_EPOCHS: 20
+  EVAL_STEPS: 100
+  GRAD_CLIP: 10.0
+  SEED: 1234
+  MINING_TEMPERATURE: 0.1
+
+AUG:
+  HFLIP: 0.5
+  VFLIP: 0.0
+  RANDOM_CROP: 0.5
+  COLOR_JITTER: 0.0
+  RANDOM_ERASING: 0.5
+
+OUTPUT_DIR: logs/{timestamp}
